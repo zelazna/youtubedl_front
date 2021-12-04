@@ -2,8 +2,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { Box } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import { Box, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 

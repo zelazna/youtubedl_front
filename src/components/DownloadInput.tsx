@@ -22,7 +22,7 @@ export default function DownloadInput() {
   const requests = useRequestContext();
 
   const [url, setRequestUrl] = useState("");
-  const [format, setDownloadFormat] = useState("mp4");
+  const [extension, setDownloadExtension] = useState("mp3");
 
   const handleSubmit = (evt: React.SyntheticEvent) => {
     evt.preventDefault();
@@ -30,7 +30,7 @@ export default function DownloadInput() {
       const result = await fetch("/requests/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, type: "video", format }),
+        body: JSON.stringify({ url: url.trim(), type: "video", extension }),
       });
       const data = await result.json();
       setRequestActionsContext([data, ...requests]);
@@ -46,7 +46,7 @@ export default function DownloadInput() {
         onSubmit={handleSubmit}
         autoComplete="off"
       >
-        <AppBar position="static" color="default">
+        <AppBar position="static" color="inherit">
           <Toolbar>
             <Grid container spacing={2} alignItems="center">
               <Grid item xs>
@@ -67,8 +67,8 @@ export default function DownloadInput() {
             <Grid item>
               <Select
                 variant="standard"
-                value={format}
-                onChange={(evt) => setDownloadFormat(evt.target.value)}
+                value={extension}
+                onChange={(evt) => setDownloadExtension(evt.target.value)}
               >
                 <MenuItem value={"mp4"}>mp4 ( video )</MenuItem>
                 <MenuItem value={"mp3"}>mp3 ( music )</MenuItem>

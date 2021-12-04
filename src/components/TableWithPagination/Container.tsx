@@ -61,6 +61,7 @@ export const Container = ({ requests }: ContainerProps) => {
                         <TableCell>Url</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell align="right">State</TableCell>
+                        <TableCell>Extension</TableCell>
                         <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
@@ -68,7 +69,7 @@ export const Container = ({ requests }: ContainerProps) => {
                     {(rowsPerPage > 0
                         ? requests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         : requests
-                    ).map((request) => (
+                    ).map((request: RequestInterface) => (
                         <TableRow key={request.id}>
                             <TableCell>
                                 {request.download
@@ -91,6 +92,7 @@ export const Container = ({ requests }: ContainerProps) => {
                                     color={ChipMapping.get(request.state) as ChipColor}
                                 />
                             </TableCell>
+                            <TableCell>{request.extension}</TableCell>
                             <TableCell>
                                 {request.download ? (
                                     <IconButton

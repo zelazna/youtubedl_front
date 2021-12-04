@@ -29,11 +29,12 @@ export enum RequestState {
 }
 
 export interface RequestInterface {
-  url: string;
-  type: string;
   id: string;
-  state: RequestState;
   download: DownloadInterface;
+  extension: string;
+  state: RequestState;
+  type: string;
+  url: string;
 }
 
 export const [useRequestContext, RequestContextProvider] = createCtx<RequestInterface[]>()
