@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from "react";
 
-
 // https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/context/
 function createCtx<A extends {} | null>() {
   const ctx = createContext<A | undefined>(undefined);
@@ -13,13 +12,12 @@ function createCtx<A extends {} | null>() {
   return [useCtx, ctx.Provider] as const; // 'as const' makes TypeScript infer a tuple
 }
 
-
 interface DownloadInterface {
-  name: string,
-  thumbnail_url: string,
-  url: string,
-  id: string,
-  created_at: string
+  name: string;
+  thumbnail_url: string;
+  url: string;
+  id: string;
+  created_at: string;
 }
 
 export enum RequestState {
@@ -37,8 +35,10 @@ export interface RequestInterface {
   url: string;
 }
 
-export const [useRequestContext, RequestContextProvider] = createCtx<RequestInterface[]>()
-export const [useRequestActionsContext, RequestActionsContextProvider] = createCtx<React.Dispatch<React.SetStateAction<any>>>()
+export const [useRequestContext, RequestContextProvider] =
+  createCtx<RequestInterface[]>();
+export const [useRequestActionsContext, RequestActionsContextProvider] =
+  createCtx<React.Dispatch<React.SetStateAction<any>>>();
 
 const RequestContext = (props: React.PropsWithChildren<{}>) => {
   const [requests, setRequests] = useState([]);

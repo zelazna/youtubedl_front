@@ -1,11 +1,20 @@
 import SendIcon from "@mui/icons-material/Send";
 import {
-  AppBar, FormControl, Grid, IconButton, MenuItem, Paper, Select, TextField, Toolbar, Tooltip
+  AppBar,
+  FormControl,
+  Grid,
+  IconButton,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Toolbar,
+  Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
 import {
   useRequestActionsContext,
-  useRequestContext
+  useRequestContext,
 } from "../context/RequestsContext";
 
 export default function DownloadInput() {
@@ -28,7 +37,7 @@ export default function DownloadInput() {
         setRequestActionsContext([data, ...requests]);
         setRequestUrl("");
       } catch (error) {
-        // TODO: Handle backend Exceptions 
+        // TODO: Handle backend Exceptions
         console.log(error);
       }
     })();
