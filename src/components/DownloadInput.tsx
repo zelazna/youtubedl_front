@@ -1,20 +1,11 @@
-import React, { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import {
-  MenuItem,
-  Select,
-  IconButton,
-  Paper,
-  AppBar,
-  Toolbar,
-  Grid,
-  TextField,
-  Tooltip,
-  FormControl,
+  AppBar, FormControl, Grid, IconButton, MenuItem, Paper, Select, TextField, Toolbar, Tooltip
 } from "@mui/material";
+import React, { useState } from "react";
 import {
   useRequestActionsContext,
-  useRequestContext,
+  useRequestContext
 } from "../context/RequestsContext";
 
 export default function DownloadInput() {
@@ -27,14 +18,19 @@ export default function DownloadInput() {
   const handleSubmit = (evt: React.SyntheticEvent) => {
     evt.preventDefault();
     (async () => {
-      const result = await fetch("/requests/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim(), type: "video", extension }),
-      });
-      const data = await result.json();
-      setRequestActionsContext([data, ...requests]);
-      setRequestUrl("");
+      try {
+        const result = await fetch("/requests/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, type: "video", extension }),
+        });
+        const data = await result.json();
+        setRequestActionsContext([data, ...requests]);
+        setRequestUrl("");
+      } catch (error) {
+        // TODO: Handle backend Exceptions 
+        console.log(error);
+      }
     })();
   };
 
@@ -60,7 +56,7 @@ export default function DownloadInput() {
                   variant="standard"
                   value={url}
                   required
-                  onChange={(evt) => setRequestUrl(evt.target.value)}
+                  onChange={(evt) => setRequestUrl(evt.target.value.trim())}
                 />
               </Grid>
             </Grid>

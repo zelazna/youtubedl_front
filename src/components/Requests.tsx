@@ -1,8 +1,7 @@
 import { Grid, Paper, Toolbar, Typography } from '@mui/material';
 import { useEffect } from 'react';
-
 import { useRequestActionsContext, useRequestContext } from '../context/RequestsContext';
-import { Container } from './TableWithPagination/Container';
+import { TablePaginationContainer } from './TablePagination/TablePaginationContainer';
 
 
 export default function Requests() {
@@ -11,11 +10,16 @@ export default function Requests() {
 
   useEffect(() => {
     (async () => {
-      const result = await fetch(
-        "/requests/?skip=0&orderby=id%20desc"
-      );
-      const data = await result.json();
-      setRequestActionsContext(data);
+      try {
+        const result = await fetch(
+          "/requests/?skip=0&orderby=id%20desc"
+        );
+        const data = await result.json();
+        setRequestActionsContext(data);
+      } catch (error) {
+        // TODO: Handle backend Exceptions 
+        console.log(error);
+      }
     })();
   }, [setRequestActionsContext]);
 
@@ -38,7 +42,7 @@ export default function Requests() {
             Recent Downloads
           </Typography>
         </Toolbar>
-        <Container requests={requests} />
+        <TablePaginationContainer requests={requests} />
       </Paper>
     </Grid>
   );
