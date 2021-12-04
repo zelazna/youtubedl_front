@@ -1,25 +1,29 @@
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+import Requests from './components/Requests';
+import DownloadInput from './components/DownloadInput';
+import RequestContext from './context/RequestsContext';
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <AppBar position="relative">
+        <Toolbar />
+      </AppBar>
+      <Container maxWidth="lg">
+        <Box sx={{ my: 4 }}>
+          <RequestContext>
+            <DownloadInput />
+            <Requests />
+          </RequestContext>
+        </Box>
+      </Container>
+    </React.Fragment>
   );
 }
 
