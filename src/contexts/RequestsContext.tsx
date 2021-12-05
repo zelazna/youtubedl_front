@@ -24,6 +24,7 @@ export enum RequestState {
   error = "error",
   pending = "pending",
   done = "done",
+  in_progress = "in progress",
 }
 
 export interface RequestInterface {
@@ -35,19 +36,20 @@ export interface RequestInterface {
   url: string;
 }
 
+interface RequestContextInterface {
+  requests: RequestInterface[];
+  setRequests: React.Dispatch<React.SetStateAction<any>>;
+}
+
 export const [useRequestContext, RequestContextProvider] =
-  createCtx<RequestInterface[]>();
-export const [useRequestActionsContext, RequestActionsContextProvider] =
-  createCtx<React.Dispatch<React.SetStateAction<any>>>();
+  createCtx<RequestContextInterface>();
 
 const RequestContext = (props: React.PropsWithChildren<{}>) => {
   const [requests, setRequests] = useState([]);
 
   return (
-    <RequestContextProvider value={requests}>
-      <RequestActionsContextProvider value={setRequests}>
-        {props.children}
-      </RequestActionsContextProvider>
+    <RequestContextProvider value={{ requests, setRequests }}>
+      {props.children}
     </RequestContextProvider>
   );
 };

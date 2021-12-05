@@ -1,27 +1,45 @@
 import { Grid, Paper, Toolbar, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
-  useRequestActionsContext,
+  RequestInterface,
   useRequestContext,
-} from "../context/RequestsContext";
+} from "../contexts/RequestsContext";
 import { TablePaginationContainer } from "./TablePagination/TablePaginationContainer";
 
 export default function Requests() {
-  const setRequestActionsContext = useRequestActionsContext();
-  const requests = useRequestContext();
+  const { requests, setRequests } = useRequestContext();
+  const socket = useRef(new WebSocket("ws://localhost:8000/ws"));
 
   useEffect(() => {
     (async () => {
       try {
         const result = await fetch("/requests/?skip=0&orderby=id%20desc");
         const data = await result.json();
-        setRequestActionsContext(data);
+        setRequests(data);
       } catch (error) {
         // TODO: Handle backend Exceptions
         console.log(error);
       }
     })();
-  }, [setRequestActionsContext]);
+
+    let socketRefValue: any = null;
+    socketRefValue = socket.current;
+
+    socket.current.onopen = () => {
+      console.info("WebSocket connection opened");
+    };
+    return function cleanup() {
+      socketRefValue.close();
+    };
+  }, [setRequests]);
+
+  useEffect(() => {
+    const updateState = (data: RequestInterface) => {
+      const newState = requests.concat([]).filter((req) => req.id !== data.id);
+      setRequests([data, ...newState]);
+    };
+    socket.current.onmessage = (msg) => updateState(JSON.parse(msg.data));
+  }, [requests, setRequests]);
 
   return (
     <Grid item xs={12}>

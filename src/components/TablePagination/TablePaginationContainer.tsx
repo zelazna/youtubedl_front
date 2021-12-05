@@ -14,16 +14,18 @@ import {
 import IconButton from "@mui/material/IconButton";
 import moment from "moment";
 import React from "react";
-import { RequestInterface, RequestState } from "../../context/RequestsContext";
+import { RequestInterface, RequestState } from "../../contexts/RequestsContext";
 import TablePaginationActions from "./TablePaginationActions";
 
-const ChipMapping = new Map<string, string>([
+const ChipMapping = new Map<
+  RequestState,
+  "error" | "primary" | "success" | "warning"
+>([
   [RequestState.error, "error"],
   [RequestState.pending, "primary"],
   [RequestState.done, "success"],
+  [RequestState.in_progress, "warning"],
 ]);
-
-type ChipColor = "error" | "primary" | "success";
 
 interface ContainerProps {
   requests: RequestInterface[];
@@ -74,7 +76,7 @@ export const TablePaginationContainer = ({ requests }: ContainerProps) => {
             <TableRow key={request.id}>
               <TableCell>
                 {request.download
-                  ? moment(request.download.created_at).format("MMM Do YY")
+                  ? moment(request.download.created_at).format("MMM Do YYYY")
                   : null}
               </TableCell>
               <TableCell>
@@ -87,10 +89,10 @@ export const TablePaginationContainer = ({ requests }: ContainerProps) => {
                   ? request.download.name.substring(0, 10)
                   : null}
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Chip
                   label={request.state}
-                  color={ChipMapping.get(request.state) as ChipColor}
+                  color={ChipMapping.get(request.state)}
                 />
               </TableCell>
               <TableCell>{request.extension}</TableCell>

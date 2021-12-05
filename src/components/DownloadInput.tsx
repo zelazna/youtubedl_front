@@ -12,15 +12,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useState } from "react";
-import {
-  useRequestActionsContext,
-  useRequestContext,
-} from "../context/RequestsContext";
 
 export default function DownloadInput() {
-  const setRequestActionsContext = useRequestActionsContext();
-  const requests = useRequestContext();
-
   const [url, setRequestUrl] = useState("");
   const [extension, setDownloadExtension] = useState("mp3");
 
@@ -28,13 +21,11 @@ export default function DownloadInput() {
     evt.preventDefault();
     (async () => {
       try {
-        const result = await fetch("/requests/", {
+        await fetch("/requests/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url, type: "video", extension }),
         });
-        const data = await result.json();
-        setRequestActionsContext([data, ...requests]);
         setRequestUrl("");
       } catch (error) {
         // TODO: Handle backend Exceptions
