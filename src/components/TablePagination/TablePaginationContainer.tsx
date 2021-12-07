@@ -1,3 +1,4 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import Download from "@mui/icons-material/Download";
 import {
   Chip,
@@ -14,7 +15,10 @@ import {
 import IconButton from "@mui/material/IconButton";
 import moment from "moment";
 import React from "react";
-import { RequestInterface, RequestState } from "../../contexts/RequestsContext";
+import {
+  RequestState,
+  useRequestContext,
+} from "../../contexts/RequestsContext";
 import TablePaginationActions from "./TablePaginationActions";
 
 const ChipMapping = new Map<
@@ -27,11 +31,8 @@ const ChipMapping = new Map<
   [RequestState.in_progress, "warning"],
 ]);
 
-interface ContainerProps {
-  requests: RequestInterface[];
-}
-
-export const TablePaginationContainer = ({ requests }: ContainerProps) => {
+export const TablePaginationContainer = () => {
+  const { requests, setRequests } = useRequestContext();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -50,6 +51,16 @@ export const TablePaginationContainer = ({ requests }: ContainerProps) => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await fetch(`/requests/${id}`, { method: "DELETE" });
+      setRequests([...requests.filter((r) => r.id !== id)]);
+    } catch (error) {
+      // TODO: Handle backend Exceptions
+      console.log(error);
+    }
   };
 
   return (
@@ -72,7 +83,7 @@ export const TablePaginationContainer = ({ requests }: ContainerProps) => {
                 page * rowsPerPage + rowsPerPage
               )
             : requests
-          ).map((request: RequestInterface) => (
+          ).map((request) => (
             <TableRow key={request.id}>
               <TableCell>
                 {request.download
@@ -105,6 +116,15 @@ export const TablePaginationContainer = ({ requests }: ContainerProps) => {
                     download
                   >
                     <Download />
+                  </IconButton>
+                ) : null}
+                {request.state === RequestState.error ||
+                request.state === RequestState.done ? (
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDelete(request.id)}
+                  >
+                    <DeleteIcon />
                   </IconButton>
                 ) : null}
               </TableCell>

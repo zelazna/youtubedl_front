@@ -28,7 +28,7 @@ export enum RequestState {
 }
 
 export interface RequestInterface {
-  id: string;
+  id: number;
   download: DownloadInterface;
   extension: string;
   state: RequestState;

@@ -8,7 +8,7 @@ import { TablePaginationContainer } from "./TablePagination/TablePaginationConta
 
 export default function Requests() {
   const { requests, setRequests } = useRequestContext();
-  const socket = useRef(new WebSocket("ws://localhost:8000/ws"));
+  const socket = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -22,23 +22,26 @@ export default function Requests() {
       }
     })();
 
+    socket.current = new WebSocket("ws://localhost:8000/ws");
     let socketRefValue: any = null;
     socketRefValue = socket.current;
 
     socket.current.onopen = () => {
       console.info("WebSocket connection opened");
     };
+
     return function cleanup() {
       socketRefValue.close();
     };
   }, [setRequests]);
 
   useEffect(() => {
-    const updateState = (data: RequestInterface) => {
-      const newState = requests.concat([]).filter((req) => req.id !== data.id);
-      setRequests([data, ...newState]);
-    };
-    socket.current.onmessage = (msg) => updateState(JSON.parse(msg.data));
+    const updateState = (data: RequestInterface) =>
+      setRequests([...requests.filter((r) => r.id !== data.id), data]);
+
+    if (socket.current) {
+      socket.current.onmessage = (msg) => updateState(JSON.parse(msg.data));
+    }
   }, [requests, setRequests]);
 
   return (
@@ -60,7 +63,7 @@ export default function Requests() {
             Recent Downloads
           </Typography>
         </Toolbar>
-        <TablePaginationContainer requests={requests} />
+        <TablePaginationContainer />
       </Paper>
     </Grid>
   );
