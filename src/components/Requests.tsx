@@ -1,4 +1,5 @@
 import { Grid, Paper, Toolbar, Typography } from "@mui/material";
+import axios from "axios";
 import { useEffect, useRef } from "react";
 import {
   RequestInterface,
@@ -13,12 +14,13 @@ export default function Requests() {
   useEffect(() => {
     (async () => {
       try {
-        const result = await fetch("/requests/?skip=0&orderby=id%20desc");
-        const data = await result.json();
+        const result = await axios("/requests/?skip=0&orderby=id%20desc");
+        const data = await result.data;
         setRequests(data);
       } catch (error) {
-        // TODO: Handle backend Exceptions
-        console.log(error);
+        if (error instanceof Error) {
+          enqueueSnackbar(error.message, { variant: "error" });
+        }
       }
     })();
 
@@ -37,7 +39,7 @@ export default function Requests() {
 
   useEffect(() => {
     const updateState = (data: RequestInterface) =>
-      setRequests([...requests.filter((r) => r.id !== data.id), data]);
+      setRequests([data, ...requests.filter((r) => r.id !== data.id)]);
 
     if (socket.current) {
       socket.current.onmessage = (msg) => updateState(JSON.parse(msg.data));
@@ -67,4 +69,7 @@ export default function Requests() {
       </Paper>
     </Grid>
   );
+}
+function enqueueSnackbar(message: string, arg1: { variant: string }) {
+  throw new Error("Function not implemented.");
 }

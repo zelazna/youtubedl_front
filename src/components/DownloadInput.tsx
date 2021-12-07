@@ -11,25 +11,34 @@ import {
   Toolbar,
   Tooltip,
 } from "@mui/material";
+import axios from "axios";
+import { useSnackbar } from "notistack";
 import React, { useState } from "react";
 
 export default function DownloadInput() {
   const [url, setRequestUrl] = useState("");
-  const [extension, setDownloadExtension] = useState("mp3");
+  const [extension, setDownloadExtension] = useState("mp4");
+  const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = (evt: React.SyntheticEvent) => {
+  const handleSubmit = (evt: React.FormEvent) => {
     evt.preventDefault();
     (async () => {
       try {
-        await fetch("/requests/", {
+        await axios({
+          url: "/requests/",
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url, type: "video", extension }),
+          data: JSON.stringify({ url, type: "video", extension }),
         });
         setRequestUrl("");
+        enqueueSnackbar("Your download has been registered!", {
+          variant: "success",
+        });
       } catch (error) {
-        // TODO: Handle backend Exceptions
-        console.log(error);
+        if (error instanceof Error) {
+          enqueueSnackbar(error.message, { variant: "error" });
+        }
+        setRequestUrl("");
       }
     })();
   };
