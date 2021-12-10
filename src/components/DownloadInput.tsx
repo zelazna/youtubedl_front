@@ -13,33 +13,41 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import React, { useState } from "react";
+import React from "react";
+import { useAuthContext } from "../contexts/AuthContext";
 
 export default function DownloadInput() {
-  const [url, setRequestUrl] = useState("");
-  const [extension, setDownloadExtension] = useState("mp4");
   const { enqueueSnackbar } = useSnackbar();
+  const auth = useAuthContext();
 
-  const handleSubmit = (evt: React.FormEvent) => {
-    evt.preventDefault();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+
     (async () => {
       try {
         await axios({
           url: "/requests/",
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          data: JSON.stringify({ url, type: "video", extension }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.user?.access_token}`,
+          },
+          data: JSON.stringify({
+            url: data.get("url"),
+            type: "video",
+            extension: data.get("extension"),
+          }),
         });
-        setRequestUrl("");
         enqueueSnackbar("Your download has been registered!", {
           variant: "success",
         });
       } catch (error) {
-        if (error instanceof Error) {
-          enqueueSnackbar(error.message, { variant: "error" });
+        if (axios.isAxiosError(error) && error.response) {
+          enqueueSnackbar(error.response.data.detail, { variant: "error" });
         }
-        setRequestUrl("");
       }
+      (event.target as HTMLFormElement).reset();
     })();
   };
 
@@ -63,17 +71,19 @@ export default function DownloadInput() {
                     sx: { fontSize: "default" },
                   }}
                   variant="standard"
-                  value={url}
+                  name="url"
+                  id="url"
+                  autoFocus
                   required
-                  onChange={(evt) => setRequestUrl(evt.target.value.trim())}
                 />
               </Grid>
             </Grid>
             <Grid item>
               <Select
                 variant="standard"
-                value={extension}
-                onChange={(evt) => setDownloadExtension(evt.target.value)}
+                name="extension"
+                id="extension"
+                defaultValue="mp3"
               >
                 <MenuItem value={"mp4"}>mp4 ( video )</MenuItem>
                 <MenuItem value={"mp3"}>mp3 ( music )</MenuItem>

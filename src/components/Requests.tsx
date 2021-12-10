@@ -1,6 +1,8 @@
 import { Grid, Paper, Toolbar, Typography } from "@mui/material";
 import axios from "axios";
+import { useSnackbar } from "notistack";
 import { useEffect, useRef } from "react";
+import { useAuthContext } from "../contexts/AuthContext";
 import {
   RequestInterface,
   useRequestContext,
@@ -8,13 +10,17 @@ import {
 import { TablePaginationContainer } from "./TablePagination/TablePaginationContainer";
 
 export default function Requests() {
+  const { enqueueSnackbar } = useSnackbar();
   const { requests, setRequests } = useRequestContext();
   const socket = useRef<WebSocket | null>(null);
+  const auth = useAuthContext();
 
   useEffect(() => {
     (async () => {
       try {
-        const result = await axios("/requests/?skip=0&orderby=id%20desc");
+        const result = await axios.get("/requests/?skip=0&orderby=id%20desc", {
+          headers: { Authorization: `Bearer ${auth.user?.access_token}` },
+        });
         const data = await result.data;
         setRequests(data);
       } catch (error) {
@@ -35,7 +41,7 @@ export default function Requests() {
     return function cleanup() {
       socketRefValue.close();
     };
-  }, [setRequests]);
+  }, [enqueueSnackbar, setRequests, auth]);
 
   useEffect(() => {
     const updateState = (data: RequestInterface) =>
@@ -69,7 +75,4 @@ export default function Requests() {
       </Paper>
     </Grid>
   );
-}
-function enqueueSnackbar(message: string, arg1: { variant: string }) {
-  throw new Error("Function not implemented.");
 }

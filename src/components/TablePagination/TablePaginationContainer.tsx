@@ -13,8 +13,10 @@ import {
   TableRow,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
+import axios from "axios";
 import moment from "moment";
 import React from "react";
+import { useAuthContext } from "../../contexts/AuthContext";
 import {
   RequestState,
   useRequestContext,
@@ -35,6 +37,8 @@ export const TablePaginationContainer = () => {
   const { requests, setRequests } = useRequestContext();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const auth = useAuthContext();
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - requests.length) : 0;
@@ -55,7 +59,9 @@ export const TablePaginationContainer = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`/requests/${id}`, { method: "DELETE" });
+      await axios.delete(`/requests/${id}`, {
+        headers: { Authorization: `Bearer ${auth.user?.access_token}` },
+      });
       setRequests([...requests.filter((r) => r.id !== id)]);
     } catch (error) {
       // TODO: Handle backend Exceptions

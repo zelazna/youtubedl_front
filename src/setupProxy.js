@@ -9,6 +9,13 @@ module.exports = function (app) {
     })
   );
   app.use(
+    "/users",
+    createProxyMiddleware({
+      target: "http://localhost:8000",
+      changeOrigin: true,
+    })
+  );
+  app.use(
     "/files",
     createProxyMiddleware({
       target: "http://localhost:8000",
