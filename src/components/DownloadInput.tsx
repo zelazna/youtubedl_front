@@ -14,6 +14,7 @@ import {
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import React from "react";
+import { api } from "../api";
 import { useAuthContext } from "../contexts/AuthContext";
 
 export default function DownloadInput() {
@@ -26,19 +27,11 @@ export default function DownloadInput() {
 
     (async () => {
       try {
-        await axios({
-          url: "/requests/",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${auth.user?.access_token}`,
-          },
-          data: JSON.stringify({
-            url: data.get("url"),
-            type: "video",
-            extension: data.get("extension"),
-          }),
-        });
+        await api.createRequest(
+          auth.user!.access_token,
+          data.get("url") as string,
+          data.get("extension") as string
+        );
         enqueueSnackbar("Your download has been registered!", {
           variant: "success",
         });

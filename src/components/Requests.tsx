@@ -1,7 +1,7 @@
 import { Grid, Paper, Toolbar, Typography } from "@mui/material";
-import axios from "axios";
 import { useSnackbar } from "notistack";
 import { useEffect, useRef } from "react";
+import { api } from "../api";
 import { useAuthContext } from "../contexts/AuthContext";
 import {
   RequestInterface,
@@ -18,10 +18,7 @@ export default function Requests() {
   useEffect(() => {
     (async () => {
       try {
-        const result = await axios.get("/requests/?skip=0&orderby=id%20desc", {
-          headers: { Authorization: `Bearer ${auth.user?.access_token}` },
-        });
-        const data = await result.data;
+        const data = await api.getRequests(auth.user!.access_token);
         setRequests(data);
       } catch (error) {
         if (error instanceof Error) {

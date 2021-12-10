@@ -13,9 +13,9 @@ import {
   TableRow,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import axios from "axios";
 import moment from "moment";
 import React from "react";
+import { api } from "../../api";
 import { useAuthContext } from "../../contexts/AuthContext";
 import {
   RequestState,
@@ -59,9 +59,7 @@ export const TablePaginationContainer = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/requests/${id}`, {
-        headers: { Authorization: `Bearer ${auth.user?.access_token}` },
-      });
+      await api.deleteRequest(auth.user!.access_token, id);
       setRequests([...requests.filter((r) => r.id !== id)]);
     } catch (error) {
       // TODO: Handle backend Exceptions
