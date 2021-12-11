@@ -8,18 +8,18 @@ const headers = (token: string) => {
 
 export const api = {
   async getUser(token: string) {
-    const res = await axios.get<User>("/users/me", headers(token));
+    const res = await axios.get<User>("/api/users/me", headers(token));
     return res.data;
   },
   async sigIn(email: string, password: string) {
     const params = new URLSearchParams();
     params.append("username", email);
     params.append("password", password);
-    const res = await axios.post<User>("/users/login", params);
+    const res = await axios.post<User>("/api/users/login", params);
     return res.data;
   },
   async deleteRequest(token: string, id: number) {
-    await axios.delete(`/requests/${id}`, headers(token));
+    await axios.delete(`/api/requests/${id}`, headers(token));
   },
   async getRequests(
     token: string,
@@ -27,14 +27,14 @@ export const api = {
     order_by: string = "id%20desc"
   ) {
     const result = await axios.get<RequestInterface[]>(
-      `/requests/?skip=${skip}&orderby=${order_by}`,
+      `/api/requests/?skip=${skip}&orderby=${order_by}`,
       headers(token)
     );
     return result.data;
   },
   async createRequest(token: string, url: string, extension: string) {
     await axios.post(
-      "/requests/",
+      "/api/requests/",
       {
         url,
         type: "video",

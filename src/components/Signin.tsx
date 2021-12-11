@@ -8,10 +8,14 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/AuthContext";
 
 export default function SignIn() {
   let auth = useAuthContext();
+  let navigate = useNavigate();
+  let location = useLocation();
+  let from = location.state?.from?.pathname || "/";
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -20,7 +24,10 @@ export default function SignIn() {
     const password = data.get("password") as string;
     const remember = (data.get("remember") as string) || null;
     (event.target as HTMLFormElement).reset();
-    (async () => await auth.signin(email, password, remember))();
+    (async () =>
+      auth.signin(email, password, remember, () =>
+        navigate(from, { replace: true })
+      ))();
   };
 
   return (
@@ -76,12 +83,12 @@ export default function SignIn() {
             Sign In
           </Button>
           {/* <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                    </Grid> */}
+                  <Grid item xs>
+                      <Link href="#" variant="body2">
+                          Forgot password?
+                      </Link>
+                  </Grid>
+              </Grid> */}
         </Box>
       </Box>
     </Container>

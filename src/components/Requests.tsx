@@ -27,7 +27,9 @@ export default function Requests() {
       }
     })();
 
-    socket.current = new WebSocket("ws://localhost:8000/ws");
+    socket.current = new WebSocket(
+      process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8000/ws"
+    );
     let socketRefValue: any = null;
     socketRefValue = socket.current;
 

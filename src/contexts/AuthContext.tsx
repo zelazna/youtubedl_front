@@ -11,8 +11,15 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  signin: (email: string, password: string, remember: string | null) => void;
-  signout: () => void;
+  signin: (
+    email: string,
+    password: string,
+    remember: string | null,
+    callback: VoidFunction
+  ) => void;
+  signout: (callback: VoidFunction) => void;
+  checkUser: (token: string) => Promise<any>;
+  isLoading: boolean;
 }
 
 export const [useAuthContext, AuthContextProvider] =
@@ -24,14 +31,16 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   let [user, setUser] = useState<User | null>(null);
+  let [isLoading, setLoading] = useState<boolean>(true);
   const { enqueueSnackbar } = useSnackbar();
 
   let signin = async (
     email: string,
     password: string,
-    remember: string | null
+    remember: string | null,
+    callback: VoidFunction
   ) => {
-    return await authProvider.signin(
+    await authProvider.signin(
       email,
       password,
       (response: any, error: Error) => {
@@ -46,6 +55,7 @@ export default function AuthProvider({
         setUser(response);
       }
     );
+    callback();
   };
 
   let checkUser = async (token: string) => {
@@ -59,21 +69,27 @@ export default function AuthProvider({
     );
   };
 
-  let signout = () => {
-    return authProvider.signout(() => {
+  let signout = (callback: VoidFunction) => {
+    authProvider.signout(() => {
       setUser(null);
       removeLocalToken();
     });
+    callback();
   };
 
   useEffect(() => {
     const token = getLocalToken();
-    if (token) {
-      (async () => await checkUser(token))();
-    }
+    (async () => {
+      if (token) {
+        try {
+          await checkUser(token);
+        } catch (error) {}
+      }
+      setLoading(false);
+    })();
   }, []);
 
-  let value = { user, signin, signout };
+  let value = { user, signin, signout, checkUser, isLoading };
 
   return <AuthContextProvider value={value}>{children}</AuthContextProvider>;
 }
