@@ -42,9 +42,6 @@ export const TablePaginationContainer = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const auth = useAuthContext();
   const { enqueueSnackbar } = useSnackbar();
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -122,7 +119,7 @@ export const TablePaginationContainer = () => {
                 />
               </TableCell>
               <TableCell>{request.extension}</TableCell>
-              <TableCell>
+              <TableCell sx={{ display: "flex", flexDirection: "row" }}>
                 {request.download ? (
                   <Fragment>
                     <IconButton
@@ -133,9 +130,7 @@ export const TablePaginationContainer = () => {
                     >
                       <Download />
                     </IconButton>
-                    <IconButton aria-label="play">
-                      <PlayModal content={request} />
-                    </IconButton>
+                    <PlayModal content={request} />
                   </Fragment>
                 ) : null}
                 {request.state === RequestState.error ||

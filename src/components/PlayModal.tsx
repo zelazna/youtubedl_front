@@ -45,11 +45,14 @@ const computeContentType = (content: RequestInterface) => {
         </audio>
       </Card>
     );
-  } else if (content.extension === "mp4") {
+  } else {
     return (
       <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        <video style={{ width: 800 }} controls width="250">
-          <source src={content.download.url} type="video/mp4" />
+        <video style={{ minWidth: 800 }} controls>
+          <source
+            src={content.download.url}
+            type={`video/${content.extension}`}
+          />
           Sorry, your browser doesn't support embedded videos.
         </video>
       </Card>
