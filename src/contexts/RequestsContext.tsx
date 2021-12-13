@@ -19,7 +19,7 @@ export enum RequestState {
 export interface RequestInterface {
   id: number;
   download: DownloadInterface;
-  extension: string;
+  extension: "mp3" | "mp4";
   state: RequestState;
   type: string;
   url: string;

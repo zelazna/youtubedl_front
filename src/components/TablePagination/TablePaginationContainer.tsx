@@ -13,14 +13,17 @@ import {
   TableRow,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
+import axios from "axios";
 import moment from "moment";
-import React from "react";
+import { useSnackbar } from "notistack";
+import React, { Fragment } from "react";
 import { api } from "../../api";
 import { useAuthContext } from "../../contexts/AuthContext";
 import {
   RequestState,
   useRequestContext,
 } from "../../contexts/RequestsContext";
+import PlayModal from "../PlayModal";
 import TablePaginationActions from "./TablePaginationActions";
 
 const ChipMapping = new Map<
@@ -38,6 +41,10 @@ export const TablePaginationContainer = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const auth = useAuthContext();
+  const { enqueueSnackbar } = useSnackbar();
+  // const [open, setOpen] = React.useState(false);
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => setOpen(false);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -62,8 +69,12 @@ export const TablePaginationContainer = () => {
       await api.deleteRequest(auth.user!.access_token, id);
       setRequests([...requests.filter((r) => r.id !== id)]);
     } catch (error) {
-      // TODO: Handle backend Exceptions
-      console.log(error);
+      if (axios.isAxiosError(error) && error.response) {
+        enqueueSnackbar(
+          error.response.data.detail || "Error while deleting Download",
+          { variant: "error" }
+        );
+      }
     }
   };
 
@@ -113,14 +124,19 @@ export const TablePaginationContainer = () => {
               <TableCell>{request.extension}</TableCell>
               <TableCell>
                 {request.download ? (
-                  <IconButton
-                    aria-label="download"
-                    component={Link}
-                    href={request.download.url}
-                    download
-                  >
-                    <Download />
-                  </IconButton>
+                  <Fragment>
+                    <IconButton
+                      aria-label="download"
+                      component={Link}
+                      href={request.download.url}
+                      download
+                    >
+                      <Download />
+                    </IconButton>
+                    <IconButton aria-label="play">
+                      <PlayModal content={request} />
+                    </IconButton>
+                  </Fragment>
                 ) : null}
                 {request.state === RequestState.error ||
                 request.state === RequestState.done ? (
