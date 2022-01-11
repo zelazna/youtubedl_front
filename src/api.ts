@@ -1,6 +1,6 @@
 import axios from "axios";
 import { User } from "./contexts/AuthContext";
-import { RequestInterface } from "./contexts/RequestsContext";
+import { Request } from "./contexts/RequestsContext";
 
 const headers = (token: string) => {
   return { headers: { Authorization: `Bearer ${token}` } };
@@ -26,7 +26,7 @@ export const api = {
     skip: number = 0,
     order_by: string = "id%20desc"
   ) {
-    const result = await axios.get<RequestInterface[]>(
+    const result = await axios.get<Request[]>(
       `/api/requests/?skip=${skip}&orderby=${order_by}`,
       headers(token)
     );

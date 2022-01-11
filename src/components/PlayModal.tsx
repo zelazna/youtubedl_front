@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { RequestInterface } from "../contexts/RequestsContext";
+import { Request } from "../contexts/RequestsContext";
 
 const style = {
   position: "absolute" as "absolute",
@@ -21,46 +21,46 @@ const style = {
   boxShadow: 24,
 };
 
-const computeContentType = (content: RequestInterface) => {
-  if (content.extension === "mp3") {
-    return (
-      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        <CardMedia
-          component="img"
-          image={content.download.thumbnail_url}
-          alt="random"
+const VideoCard = ({ content }: { content: Request }) => {
+  return (
+    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <video style={{ minWidth: 800 }} controls>
+        <source
+          src={content.download.url}
+          type={`video/${content.extension}`}
         />
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            {content.download.name}
-          </Typography>
-        </CardContent>
-        <audio
-          style={{ margin: "0 auto", width: "100%" }}
-          controls
-          src={content.download.url as string}
-        >
-          Your browser does not support the
-          <code>audio</code> element.
-        </audio>
-      </Card>
-    );
-  } else {
-    return (
-      <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        <video style={{ minWidth: 800 }} controls>
-          <source
-            src={content.download.url}
-            type={`video/${content.extension}`}
-          />
-          Sorry, your browser doesn't support embedded videos.
-        </video>
-      </Card>
-    );
-  }
+        Sorry, your browser doesn't support embedded videos.
+      </video>
+    </Card>
+  );
 };
 
-export default function PlayModal({ content }: { content: RequestInterface }) {
+const AudioCard = ({ content }: { content: Request }) => {
+  return (
+    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <CardMedia
+        component="img"
+        image={content.download.thumbnail_url}
+        alt="random"
+      />
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Typography gutterBottom variant="h5" component="h2">
+          {content.download.name}
+        </Typography>
+      </CardContent>
+      <audio
+        style={{ margin: "0 auto", width: "100%" }}
+        controls
+        src={content.download.url as string}
+      >
+        Your browser does not support the
+        <code>audio</code> element.
+      </audio>
+    </Card>
+  );
+};
+
+export default function PlayModal({ content }: { content: Request }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -76,7 +76,13 @@ export default function PlayModal({ content }: { content: RequestInterface }) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>{computeContentType(content)}</Box>
+        <Box sx={style}>
+          {content.extension === "mp3" ? (
+            <AudioCard content={content} />
+          ) : (
+            <VideoCard content={content} />
+          )}
+        </Box>
       </Modal>
     </div>
   );

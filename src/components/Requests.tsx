@@ -3,10 +3,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useRef } from "react";
 import { api } from "../api";
 import { useAuthContext } from "../contexts/AuthContext";
-import {
-  RequestInterface,
-  useRequestContext,
-} from "../contexts/RequestsContext";
+import { Request, useRequestContext } from "../contexts/RequestsContext";
 import { TablePaginationContainer } from "./TablePagination/TablePaginationContainer";
 
 export default function Requests() {
@@ -27,9 +24,11 @@ export default function Requests() {
       }
     })();
 
-    socket.current = new WebSocket(
-      process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8000/ws"
-    );
+    const websocketUrl = `${
+      process.env.REACT_APP_WEBSOCKET_URL ||
+      "ws://localhost:8000/api/requests/ws"
+    }?token=${auth.user?.access_token}`;
+    socket.current = new WebSocket(websocketUrl);
     let socketRefValue: any = null;
     socketRefValue = socket.current;
 
@@ -43,7 +42,7 @@ export default function Requests() {
   }, [enqueueSnackbar, setRequests, auth]);
 
   useEffect(() => {
-    const updateState = (data: RequestInterface) =>
+    const updateState = (data: Request) =>
       setRequests([data, ...requests.filter((r) => r.id !== data.id)]);
 
     if (socket.current) {

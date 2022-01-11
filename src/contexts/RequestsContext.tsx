@@ -1,7 +1,7 @@
 import { useState } from "react";
 import createCtx from "./createContext";
 
-interface DownloadInterface {
+interface Download {
   name: string;
   thumbnail_url: string;
   url: string;
@@ -16,9 +16,9 @@ export enum RequestState {
   in_progress = "in progress",
 }
 
-export interface RequestInterface {
+export interface Request {
   id: number;
-  download: DownloadInterface;
+  download: Download;
   extension: "mp3" | "mp4";
   state: RequestState;
   type: string;
@@ -26,7 +26,7 @@ export interface RequestInterface {
 }
 
 interface RequestContextInterface {
-  requests: RequestInterface[];
+  requests: Request[];
   setRequests: React.Dispatch<React.SetStateAction<any>>;
 }
 

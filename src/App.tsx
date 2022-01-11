@@ -22,31 +22,29 @@ const Wrapper = () => {
 
   return (
     <React.Fragment>
-      <React.Fragment>
-        <AppBar position="relative">
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Youtube DL
-            </Typography>
-            <Button
-              color="inherit"
-              onClick={() => {
-                auth.signout(() => navigate("/login"));
-              }}
-            >
-              Sign out
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <Container maxWidth="lg">
-          <Box sx={{ my: 4 }}>
-            <RequestContext>
-              <DownloadInput />
-              <Requests />
-            </RequestContext>
-          </Box>
-        </Container>
-      </React.Fragment>
+      <AppBar position="relative">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Youtube DL
+          </Typography>
+          <Button
+            color="inherit"
+            onClick={() => {
+              auth.signout(() => navigate("/login"));
+            }}
+          >
+            Sign out
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <Container maxWidth="lg">
+        <Box sx={{ my: 4 }}>
+          <RequestContext>
+            <DownloadInput />
+            <Requests />
+          </RequestContext>
+        </Box>
+      </Container>
     </React.Fragment>
   );
 };

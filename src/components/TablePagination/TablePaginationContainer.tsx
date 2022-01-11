@@ -109,7 +109,7 @@ export const TablePaginationContainer = () => {
               </TableCell>
               <TableCell>
                 {request.download
-                  ? request.download.name.substring(0, 10)
+                  ? `${request.download.name.substring(0, 30)}...`
                   : null}
               </TableCell>
               <TableCell>
