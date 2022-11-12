@@ -80,6 +80,7 @@ export const TablePaginationContainer = () => {
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell></TableCell>
             <TableCell>Created At</TableCell>
             <TableCell>Url</TableCell>
             <TableCell>Name</TableCell>
@@ -91,12 +92,15 @@ export const TablePaginationContainer = () => {
         <TableBody>
           {(rowsPerPage > 0
             ? requests.slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage
-              )
+              page * rowsPerPage,
+              page * rowsPerPage + rowsPerPage
+            )
             : requests
           ).map((request) => (
             <TableRow key={request.id}>
+              <TableCell>
+                <img src={request.download?.thumbnail_url} alt="" style={{ maxWidth: '150px' }} />
+              </TableCell>
               <TableCell>
                 {request.download
                   ? moment(request.download.created_at).format("MMM Do YYYY")
@@ -119,29 +123,31 @@ export const TablePaginationContainer = () => {
                 />
               </TableCell>
               <TableCell>{request.extension}</TableCell>
-              <TableCell sx={{ display: "flex", flexDirection: "row" }}>
-                {request.download ? (
-                  <Fragment>
+              <TableCell >
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  {request.download ? (
+                    <Fragment>
+                      <IconButton
+                        aria-label="download"
+                        component={Link}
+                        href={request.download.url}
+                        download
+                      >
+                        <Download />
+                      </IconButton>
+                      <PlayModal content={request} />
+                    </Fragment>
+                  ) : null}
+                  {request.state === RequestState.error ||
+                    request.state === RequestState.done ? (
                     <IconButton
-                      aria-label="download"
-                      component={Link}
-                      href={request.download.url}
-                      download
+                      aria-label="delete"
+                      onClick={() => handleDelete(request.id)}
                     >
-                      <Download />
+                      <DeleteIcon />
                     </IconButton>
-                    <PlayModal content={request} />
-                  </Fragment>
-                ) : null}
-                {request.state === RequestState.error ||
-                request.state === RequestState.done ? (
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => handleDelete(request.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                ) : null}
+                  ) : null}
+                </div>
               </TableCell>
             </TableRow>
           ))}

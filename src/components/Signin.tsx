@@ -19,10 +19,10 @@ export default function SignIn() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email") as string;
-    const password = data.get("password") as string;
-    const remember = (data.get("remember") as string) || null;
+    let data = new FormData(event.currentTarget);
+    let email = data.get("email") as string;
+    let password = data.get("password") as string;
+    let remember = (data.get("remember") as string) || null;
     (event.target as HTMLFormElement).reset();
     (async () =>
       auth.signin(email, password, remember, () =>
